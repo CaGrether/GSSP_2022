@@ -47,14 +47,8 @@ lapply(1:length(aff.tables),
        })
 
 ########## read them correctly
-lapply(1: length(tables),
-       function(n) {
-         read.csv(file = file.path("output", paste0(heads[n], ".csv")),
-                  fileEncoding = "UTF-8")
-        })
-
-# find out countries of extinction horizons
-which(heads=="Paleogene")
-nrow(tables[[3]])
-tables[[3]][15,1]
-tables[which(tables)]
+#lapply(1: length(tables),
+ #      function(n) {
+  #       read.csv(file = file.path("output", paste0(heads[n], ".csv")),
+   #               fileEncoding = "UTF-8")
+#        })

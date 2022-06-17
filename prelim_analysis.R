@@ -6,7 +6,7 @@ data(stages) # get stages table from divDyn
 
 # Read data
 dat <- readxl::read_excel("data/data_cleaned.xlsx")
-dat$region <- countrycode(dat$country_code, "iso3c", "region23") # ?codelist 
+dat$region <- countrycode(dat$country_code, "iso3c", "region23")  
 
 sort(table(dat$country))
 sort(table(dat$region))
@@ -115,11 +115,10 @@ world.gssp + europe +
 #dev.off()
 #browseURL("figs/world.svg")
 
-#ggsave(file="data/world.svg", plot=world.gssp, width=8, height=5)
-#ggsave(file="data/europe.svg", plot=europe, width=8, height=6.5)
-
 
 # network analysis --------------------------------------------------------
+
+######## foreign
 
 library(tidyverse)
 
@@ -163,8 +162,6 @@ papers <- tbl_graph(nodes = nodes, edges = na.omit(edges), directed = TRUE) #tak
 
 papers
 
-#ggraph(papers) + geom_edge_link() + geom_node_point() + geom_node_text(aes(label = label), repel = TRUE) + theme_graph()
-
 
 foreign <- ggraph(papers, layout = "linear") + 
   geom_edge_arc(aes(width = weight, 
@@ -184,7 +181,7 @@ foreign
 #browseURL("figs/foreign2.svg")
 
 
-################
+################ own
 
 
 # sort by time
@@ -230,15 +227,13 @@ papers <- tbl_graph(nodes = nodes, edges = na.omit(edges), directed = TRUE) #tak
                                                                             #when NA in "from", then no paper available for the GSSP
 papers
 
-# research in own country, but show all countries
-
-# one df for own
+# one dataframe for own
 own.sad <- sad %>% 
   subset(sad$Sources==sad$Destinations, ) 
 own.cnt <- as.data.frame(sort(table(own.sad$Sources)))
 names(own.cnt) <- c("Country", "Frequency")
 
-# one df for others
+# one dataframe for others
 other.sad <- sad %>% 
   subset(sad$Sources!=sad$Destinations, )
 other.cnt <- as.data.frame(unique(sort(other.sad$Sources)))
@@ -248,8 +243,8 @@ other.cnt$Frequency <- 0
 # exclude countries which are in own.cnt from other.cnt
 other.cnt <- other.cnt[-which(other.cnt$Country%in% own.cnt$Country),]
 all.cnt <- full_join(other.cnt, own.cnt)
-# plus 1 to each frequency for plotting purpose
-all.cnt$Frequency <- all.cnt$Frequency+1
+
+all.cnt$Frequency <- all.cnt$Frequency+1 # plus 1 to each frequency for plotting purpose
 
 all.cnt
 
@@ -260,7 +255,6 @@ all.cnt <- cbind(all.cnt, all.rgn)
 
 # circle diagram
 library(packcircles)
-#library(viridis)
 
 packing <- circleProgressiveLayout(all.cnt$Frequency, sizetype='area')
 packing$radius <- 0.95*packing$radius
@@ -285,6 +279,6 @@ all <- ggplot() +
 all
 
 #svg("figs/all.svg", w=8, h=6)
-#all
+all
 #dev.off()
 browseURL("figs/all.svg")
